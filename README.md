@@ -4,7 +4,7 @@ A simple and intuitive **To-Do List App** built using **Jetpack Compose**. This 
 ## 📸 Screenshots
 <div align="center">
   <img src="./Screenshot 1.png" alt="Portrait Mode" width="180"/>
-  <img src="./Screenshot 0.png" alt="Landscape Mode" width="180"/>
+  <img src="./Screenshot 0.png" alt="Landscape Mode" width="360"/>
 </div>
 
 ## 🚀 Features
