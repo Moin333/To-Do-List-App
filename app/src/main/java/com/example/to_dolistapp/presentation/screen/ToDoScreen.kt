@@ -1,4 +1,4 @@
-package com.example.to_dolistapp
+package com.example.to_dolistapp.presentation.screen
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -10,39 +10,68 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.to_dolistapp.ui.theme.Typography
+import com.example.to_dolistapp.viewmodel.AuthViewModel
+import com.example.to_dolistapp.viewmodel.ToDoViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ToDoScreen(viewModel: ToDoViewModel = viewModel()) {
+fun ToDoScreen(
+    navController: NavController,
+    authViewModel: AuthViewModel = hiltViewModel(),
+    todoViewModel: ToDoViewModel = hiltViewModel()
+) {
+    ToDoContent(todoViewModel, authViewModel, navController)
+}
+
+@Composable
+fun ToDoContent(
+    todoViewModel: ToDoViewModel,
+    authViewModel: AuthViewModel,
+    navController: NavController
+) {
     var taskText by rememberSaveable { mutableStateOf("") }
 
     Column(modifier = Modifier.padding(16.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(text = "Your Tasks", style = Typography.headlineMedium)
+            Button(onClick = {
+                authViewModel.logout()
+                navController.navigate("login") {
+                    popUpTo("todo") { inclusive = true }
+                }
+            }) {
+                Text("Logout")
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         TextField(
             value = taskText,
             onValueChange = { taskText = it },
             label = { Text(text = "Enter Task", style = Typography.bodyMedium) },
             modifier = Modifier.fillMaxWidth()
         )
-
         Spacer(modifier = Modifier.height(8.dp))
-
         Button(
             onClick = {
-                viewModel.addTask(taskText)
+                todoViewModel.addTask(taskText)
                 taskText = ""
             },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = "Add Task", style = Typography.bodyLarge)
         }
-
         Spacer(modifier = Modifier.height(16.dp))
 
         LazyColumn {
-            items(viewModel.todoList) { task ->
-                TaskItem(task, viewModel::removeTask)
+            items(todoViewModel.todoList) { task ->
+                TaskItem(task, todoViewModel::removeTask)
             }
         }
     }
