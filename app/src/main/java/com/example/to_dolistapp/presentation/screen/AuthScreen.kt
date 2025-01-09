@@ -1,39 +1,48 @@
 package com.example.to_dolistapp.presentation.screen
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import com.example.to_dolistapp.ui.theme.Typography
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.getValue
+import android.content.Intent
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.to_dolistapp.viewmodel.AuthViewModel
+import com.example.to_dolistapp.ui.theme.Typography
 
 @Composable
 fun AuthScreen(
     navController: NavController,
-    authViewModel: AuthViewModel = hiltViewModel()
+    authViewModel: AuthViewModel,
+    startActivityForResult: (Intent) -> Unit
 ) {
+    // Local UI states
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var isLogin by rememberSaveable { mutableStateOf(true) }
-    var errorMessage by remember { mutableStateOf("") }
+
+    // Observe the authentication state
+    val authState by authViewModel.authState.collectAsStateWithLifecycle()
+
+    // Handle navigation and error display based on `authState`
+    LaunchedEffect(authState.isLoggedIn) {
+        if (authState.isLoggedIn) {
+            if (navController.currentDestination?.route != "todo") {
+                navController.navigate("todo") {
+                    popUpTo("login") { inclusive = true }
+                }
+            }
+        } else {
+            if (navController.currentDestination?.route != "login") {
+                navController.navigate("login") {
+                    popUpTo("todo") { inclusive = true }
+                }
+            }
+        }
+    }
+
 
     Column(
         modifier = Modifier
@@ -63,25 +72,9 @@ fun AuthScreen(
         Button(
             onClick = {
                 if (isLogin) {
-                    authViewModel.login(email, password) { success, error ->
-                        if (success) {
-                            navController.navigate("todo") {
-                                popUpTo("login") { inclusive = true }
-                            }
-                        } else {
-                            errorMessage = error ?: "Login failed"
-                        }
-                    }
+                    authViewModel.login(email, password)
                 } else {
-                    authViewModel.register(email, password) { success, error ->
-                        if (success) {
-                            navController.navigate("todo") {
-                                popUpTo("login") { inclusive = true }
-                            }
-                        } else {
-                            errorMessage = error ?: "Signup failed"
-                        }
-                    }
+                    authViewModel.register(email, password)
                 }
             },
             modifier = Modifier.fillMaxWidth()
@@ -96,6 +89,19 @@ fun AuthScreen(
             Text(text = if (isLogin) "Don't have an account? Signup" else "Already have an account? Login")
         }
         Spacer(modifier = Modifier.height(8.dp))
-        Text(text = errorMessage, color = MaterialTheme.colorScheme.error)
+        Button(
+            onClick = {
+                val signInIntent = authViewModel.getGoogleSignInIntent()
+                startActivityForResult(signInIntent)
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = "Sign in with Google")
+        }
+        Spacer(modifier = Modifier.height(8.dp))
+        // Display error message if any
+        authState.errorMessage?.let { error ->
+            Text(text = error, color = MaterialTheme.colorScheme.error)
+        }
     }
 }

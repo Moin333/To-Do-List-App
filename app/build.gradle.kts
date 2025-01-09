@@ -57,6 +57,7 @@ dependencies {
 
     //Firebase authentication
     implementation("com.google.firebase:firebase-auth:23.1.0")
+    implementation("com.google.android.gms:play-services-auth:21.3.0")
 
     //Hilt
     implementation("com.google.dagger:hilt-android:2.51.1")
