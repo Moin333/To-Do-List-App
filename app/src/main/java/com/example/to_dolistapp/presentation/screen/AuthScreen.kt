@@ -6,9 +6,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.example.to_dolistapp.MainActivity
 import com.example.to_dolistapp.viewmodel.AuthViewModel
 import com.example.to_dolistapp.ui.theme.Typography
 
@@ -18,15 +21,18 @@ fun AuthScreen(
     authViewModel: AuthViewModel,
     startActivityForResult: (Intent) -> Unit
 ) {
-    // Local UI states
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
     var isLogin by rememberSaveable { mutableStateOf(true) }
 
-    // Observe the authentication state
     val authState by authViewModel.authState.collectAsStateWithLifecycle()
 
-    // Handle navigation and error display based on `authState`
+    val errorMessage by authViewModel.errorMessage.collectAsStateWithLifecycle()
+
+    errorMessage?.let {
+        Text(text = it, color = Color.Red)
+    }
+
     LaunchedEffect(authState.isLoggedIn) {
         if (authState.isLoggedIn) {
             if (navController.currentDestination?.route != "todo") {
@@ -43,6 +49,7 @@ fun AuthScreen(
         }
     }
 
+    val context = LocalContext.current as MainActivity
 
     Column(
         modifier = Modifier
@@ -99,7 +106,15 @@ fun AuthScreen(
             Text(text = "Sign in with Google")
         }
         Spacer(modifier = Modifier.height(8.dp))
-        // Display error message if any
+        Button(
+            onClick = {
+                context.startFacebookLogin()
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = "Sign in with Facebook")
+        }
+        Spacer(modifier = Modifier.height(8.dp))
         authState.errorMessage?.let { error ->
             Text(text = error, color = MaterialTheme.colorScheme.error)
         }

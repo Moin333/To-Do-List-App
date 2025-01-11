@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">To-Do List App</string>
     <string name="default_web_client_id">600043226969-f5qc3tbluna83td115itulf5atugim9f.apps.googleusercontent.com</string>
+    <string name="facebook_app_id">1245310939877429</string>
+    <string name="fb_login_protocol_scheme">fb1245310939877429</string>
+    <string name="facebook_client_token">a1008827645594a3d6e55da528bf0fb6</string>
 </resources>

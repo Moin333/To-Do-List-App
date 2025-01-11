@@ -2,6 +2,13 @@ package com.example.to_dolistapp.viewmodel
 
 import android.content.Intent
 import androidx.lifecycle.ViewModel
+import com.facebook.AccessToken
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
+import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -23,11 +30,22 @@ data class AuthState(
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
-    private val googleSignInClient: GoogleSignInClient
+    private val googleSignInClient: GoogleSignInClient,
+    private val loginManager: LoginManager,
+    private val callbackManager: CallbackManager
 ) : ViewModel() {
 
     private val _authState = MutableStateFlow(AuthState())
     val authState: StateFlow<AuthState> get() = _authState
+
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage: StateFlow<String?> get() = _errorMessage
+
+    fun updateErrorMessage(message: String?) {
+        _authState.update { currentState ->
+            currentState.copy(errorMessage = message)
+        }
+    }
 
     init {
         firebaseAuth.addAuthStateListener { auth ->
@@ -35,9 +53,7 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Login with email and password
-     */
+
     fun login(email: String, password: String) {
         firebaseAuth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
@@ -49,9 +65,6 @@ class AuthViewModel @Inject constructor(
             }
     }
 
-    /**
-     * Register a new user with email and password
-     */
     fun register(email: String, password: String) {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
@@ -63,33 +76,15 @@ class AuthViewModel @Inject constructor(
             }
     }
 
-    /**
-     * Logout the user
-     */
     fun logout() {
         firebaseAuth.signOut()
         googleSignInClient.signOut()
+        loginManager.logOut()
         _authState.update { AuthState(isLoggedIn = false) }
-        println("Logout completed. Auth state updated: isLoggedIn = false")
     }
 
-    /**
-     * Check if user is already logged in
-     */
-    fun isUserLoggedIn(): Boolean {
-        return firebaseAuth.currentUser != null
-    }
+    fun getGoogleSignInIntent(): Intent = googleSignInClient.signInIntent
 
-    /**
-     * Get the Google Sign-In intent
-     */
-    fun getGoogleSignInIntent(): Intent {
-        return googleSignInClient.signInIntent
-    }
-
-    /**
-     * Handle the result of Google Sign-In
-     */
     fun handleGoogleSignInResult(data: Intent?) {
         try {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
@@ -123,4 +118,29 @@ class AuthViewModel @Inject constructor(
             }
         }
     }
+
+    fun handleFacebookAccessToken(token: AccessToken) {
+        val credential = FacebookAuthProvider.getCredential(token.token)
+        firebaseAuth.signInWithCredential(credential)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // Sign-in successful
+                    _authState.update {
+                        AuthState(
+                            isLoggedIn = true,
+                            errorMessage = null // Clear any previous error messages
+                        )
+                    }
+                } else {
+                    // Sign-in failed
+                    _authState.update {
+                        AuthState(
+                            isLoggedIn = false,
+                            errorMessage = task.exception?.message ?: "Unknown error occurred"
+                        )
+                    }
+                }
+            }
+    }
+
 }
