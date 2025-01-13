@@ -6,9 +6,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -23,6 +27,7 @@ import com.facebook.FacebookException
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @Suppress("DEPRECATION")
 @AndroidEntryPoint
@@ -46,8 +51,10 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             ToDoListAppTheme {
-                AppNavigation(authViewModel) { intent ->
-                    googleSignInLauncher.launch(intent)
+                Scaffold { innerPadding ->
+                    AppNavigation(authViewModel, innerPadding) { intent ->
+                        googleSignInLauncher.launch(intent)
+                    }
                 }
             }
         }
@@ -83,7 +90,10 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun AppNavigation(authViewModel: AuthViewModel, startActivityForResult: (Intent) -> Unit) {
+fun AppNavigation(
+    authViewModel: AuthViewModel,
+    innerPadding: PaddingValues,
+    startActivityForResult: (Intent) -> Unit) {
     val navController = rememberNavController()
     val authState by authViewModel.authState.collectAsStateWithLifecycle()
 
@@ -92,20 +102,24 @@ fun AppNavigation(authViewModel: AuthViewModel, startActivityForResult: (Intent)
         if (authState.isLoggedIn) {
             if (navController.currentDestination?.route != "todo") {
                 navController.navigate("todo") {
-                    popUpTo("login") { inclusive = true }
+                    popUpTo("auth") { inclusive = true }
                 }
             }
         } else {
-            if (navController.currentDestination?.route != "login") {
-                navController.navigate("login") {
+            if (navController.currentDestination?.route != "auth") {
+                navController.navigate("auth") {
                     popUpTo("todo") { inclusive = true }
                 }
             }
         }
     }
 
-    NavHost(navController, startDestination = "login") {
-        composable("login") {
+    NavHost(
+        navController,
+        startDestination = "auth",
+        modifier = Modifier.padding(innerPadding)
+    ) {
+        composable("auth") {
             AuthScreen(
                 navController = navController,
                 authViewModel = authViewModel,
