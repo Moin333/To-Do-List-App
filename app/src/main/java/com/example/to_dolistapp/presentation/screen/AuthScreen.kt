@@ -3,10 +3,10 @@ package com.example.to_dolistapp.presentation.screen
 import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -29,6 +29,7 @@ import com.example.to_dolistapp.R
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.unit.DpOffset
 
 
 @Composable
@@ -117,13 +118,31 @@ fun AuthScreen(
                 val signInIntent = authViewModel.getGoogleSignInIntent()
                 startActivityForResult(signInIntent)
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().height(46.dp),
+            colors = ButtonDefaults.outlinedButtonColors(
+                containerColor = MaterialTheme.colorScheme.background,
+                contentColor = MaterialTheme.colorScheme.onBackground
+            )
         ) {
-            Text(
-                text = "Continue with Google",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onBackground
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+
+                Image(
+                    painter = painterResource(R.drawable.search),
+                    contentDescription = "Google",
+                    modifier = Modifier.size(20.dp)
                 )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Text(
+                    text = "Continue with Google",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -132,31 +151,45 @@ fun AuthScreen(
             onClick = {
                 context.startFacebookLogin()
             },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                text = "Continue with Facebook",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onBackground
+            modifier = Modifier.fillMaxWidth().height(46.dp),
+            colors = ButtonDefaults.outlinedButtonColors(
+                containerColor = MaterialTheme.colorScheme.background,
+                contentColor = MaterialTheme.colorScheme.onBackground
             )
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+
+                Image(
+                    painter = painterResource(R.drawable.facebook),
+                    contentDescription = "Facebook",
+                    modifier = Modifier.size(20.dp)
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Text(
+                    text = "Continue with Facebook",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
 
-        TextButton(
-            onClick = {},
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                text = "Continue with more options",
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    textDecoration = TextDecoration.Underline
-                ),
-                color = MaterialTheme.colorScheme.onBackground
-            )
-        }
+        AuthOptionsMenu(
+            onSignupWithEmailClick = {
+                navController.navigate("signup")
+            },
+            onLoginWithEmailClick = {
+                navController.navigate("login")
+            }
+        )
 
-        Spacer(modifier = Modifier.height(8.dp))
+
+        Spacer(modifier = Modifier.height(4.dp))
 
         Box(
             modifier = Modifier.fillMaxWidth(),
@@ -216,3 +249,94 @@ fun AuthScreen(
         }
     }
 }
+
+
+@Composable
+fun AuthOptionsMenu(
+    onSignupWithEmailClick: () -> Unit,
+    onLoginWithEmailClick: () -> Unit
+) {
+    var isMenuExpanded by remember { mutableStateOf(false) }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        // TextButton to open the DropdownMenu
+        TextButton(
+            onClick = { isMenuExpanded = !isMenuExpanded },
+            shape = RoundedCornerShape(8.dp),
+            colors = ButtonDefaults.textButtonColors(
+                containerColor = MaterialTheme.colorScheme.background,
+                contentColor = MaterialTheme.colorScheme.onBackground
+            ),
+            modifier = Modifier
+                .align(Alignment.Center)
+        ) {
+            Text(
+                text = "Continue with more options",
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    textDecoration = TextDecoration.Underline
+                ),
+                color = MaterialTheme.colorScheme.onBackground,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            )
+        }
+
+
+        // DropdownMenu directly anchored to the TextButton
+        DropdownMenu(
+            expanded = isMenuExpanded,
+            onDismissRequest = { isMenuExpanded = false },
+            modifier = Modifier
+                .align(Alignment.Center)
+                .background(
+                    color = MaterialTheme.colorScheme.surface,
+                    shape = RoundedCornerShape(8.dp)
+                )
+                .padding(start = 21.dp, end = 21.dp),
+            offset = DpOffset(x = 45.dp, y = 8.dp)
+        ) {
+            DropdownMenuItem(
+                text = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Image(
+                            painter = painterResource(id = R.drawable.pencil),
+                            contentDescription = "Sign up",
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text("Sign up with Email", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface)
+                    }
+                },
+                onClick = {
+                    isMenuExpanded = false
+                    onSignupWithEmailClick()
+                }
+            )
+
+            DropdownMenuItem(
+                text = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Image(
+                            painter = painterResource(id = R.drawable.email),
+                            contentDescription = "Login",
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text("Login with Email", style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurface)
+                    }
+                },
+                onClick = {
+                    isMenuExpanded = false
+                    onLoginWithEmailClick()
+                }
+            )
+        }
+    }
+}
+
+
+

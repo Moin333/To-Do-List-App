@@ -41,7 +41,7 @@ fun ToDoContent(
             Text(text = "Your Tasks", style = Typography.headlineMedium)
             Button(onClick = {
                 authViewModel.logout()
-                navController.navigate("login") {
+                navController.navigate("auth") {
                     popUpTo("todo") { inclusive = true }
                 }
             }) {

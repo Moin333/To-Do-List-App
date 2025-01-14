@@ -89,15 +89,16 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
 @Composable
 fun AppNavigation(
     authViewModel: AuthViewModel,
     innerPadding: PaddingValues,
-    startActivityForResult: (Intent) -> Unit) {
+    startActivityForResult: (Intent) -> Unit
+) {
     val navController = rememberNavController()
     val authState by authViewModel.authState.collectAsStateWithLifecycle()
 
-    // Reactively observe authentication state using LaunchedEffect
     LaunchedEffect(authState.isLoggedIn) {
         if (authState.isLoggedIn) {
             if (navController.currentDestination?.route != "todo") {
@@ -106,7 +107,7 @@ fun AppNavigation(
                 }
             }
         } else {
-            if (navController.currentDestination?.route != "auth") {
+            if (navController.currentDestination?.route !in listOf("auth", "login", "signup")) {
                 navController.navigate("auth") {
                     popUpTo("todo") { inclusive = true }
                 }
@@ -115,7 +116,7 @@ fun AppNavigation(
     }
 
     NavHost(
-        navController,
+        navController = navController,
         startDestination = "auth",
         modifier = Modifier.padding(innerPadding)
     ) {
@@ -126,6 +127,14 @@ fun AppNavigation(
                 startActivityForResult = startActivityForResult
             )
         }
-        composable("todo") { ToDoScreen(navController) }
+        composable("login") {
+            LoginScreen(navController = navController, authViewModel = authViewModel)
+        }
+        composable("signup") {
+            SignupScreen(navController = navController, authViewModel = authViewModel)
+        }
+        composable("todo") {
+            ToDoScreen(navController = navController)
+        }
     }
 }
