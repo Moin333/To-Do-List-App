@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -14,8 +15,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -28,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.to_dolistapp.ui.theme.Typography
 import com.example.to_dolistapp.viewmodel.AuthViewModel
+
 
 @Composable
 fun LoginScreen(
@@ -68,32 +71,20 @@ fun LoginScreen(
         )
 
         // Email Input Field
-        TextField(
+        CustomTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Email") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
+            label = "Your email"
         )
 
         // Password Input Field
-        TextField(
+        CustomTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Password") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            trailingIcon = {
-                IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
-                    Icon(
-                        imageVector = if (isPasswordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
-                        contentDescription = "Toggle Password Visibility"
-                    )
-                }
-            }
+            label = "Your password",
+            isPasswordField = true,
+            isPasswordVisible = isPasswordVisible,
+            onPasswordVisibilityChange = { isPasswordVisible = !isPasswordVisible }
         )
 
         // Login Button
@@ -101,9 +92,10 @@ fun LoginScreen(
             onClick = { authViewModel.login(email, password) },
             modifier = Modifier
                 .fillMaxWidth()
+                .height(80.dp)
                 .padding(vertical = 16.dp)
         ) {
-            Text("Login")
+            Text("Log in", style = Typography.labelLarge)
         }
     }
 }
@@ -147,32 +139,20 @@ fun SignupScreen(
         )
 
         // Email Input Field
-        TextField(
+        CustomTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Email") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
+            label = "Your email"
         )
 
         // Password Input Field
-        TextField(
+        CustomTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Password") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            trailingIcon = {
-                IconButton(onClick = { isPasswordVisible = !isPasswordVisible }) {
-                    Icon(
-                        imageVector = if (isPasswordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
-                        contentDescription = "Toggle Password Visibility"
-                    )
-                }
-            }
+            label = "Your password",
+            isPasswordField = true,
+            isPasswordVisible = isPasswordVisible,
+            onPasswordVisibilityChange = { isPasswordVisible = !isPasswordVisible }
         )
 
         // Signup Button
@@ -180,9 +160,48 @@ fun SignupScreen(
             onClick = { authViewModel.register(email, password) },
             modifier = Modifier
                 .fillMaxWidth()
+                .height(80.dp)
                 .padding(vertical = 16.dp)
         ) {
-            Text("Sign Up")
+            Text("Sign Up", style = Typography.labelLarge)
         }
     }
+}
+
+@Composable
+fun CustomTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    isPasswordField: Boolean = false,
+    isPasswordVisible: Boolean = false,
+    onPasswordVisibilityChange: () -> Unit = {}
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(label) },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        visualTransformation = if (isPasswordField && !isPasswordVisible) PasswordVisualTransformation() else VisualTransformation.None,
+        trailingIcon = {
+            if (isPasswordField) {
+                IconButton(onClick = onPasswordVisibilityChange) {
+                    Icon(
+                        imageVector = if (isPasswordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                        contentDescription = "Toggle Password Visibility"
+                    )
+                }
+            }
+        },
+        shape = MaterialTheme.shapes.small,
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = MaterialTheme.colorScheme.background,
+            unfocusedContainerColor = MaterialTheme.colorScheme.background,
+            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+            unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+            cursorColor = MaterialTheme.colorScheme.primary
+        )
+    )
 }
