@@ -15,6 +15,7 @@ import androidx.navigation.NavController
 import com.example.to_dolistapp.ui.theme.Typography
 import com.example.to_dolistapp.viewmodel.AuthViewModel
 import com.example.to_dolistapp.viewmodel.ToDoViewModel
+import com.example.to_dolistapp.model.entities.Task
 
 @Composable
 fun ToDoScreen(
@@ -32,6 +33,7 @@ fun ToDoContent(
     navController: NavController
 ) {
     var taskText by rememberSaveable { mutableStateOf("") }
+    val tasks by todoViewModel.todoList.collectAsState(initial = emptyList())
 
     Column(modifier = Modifier.padding(16.dp)) {
         Row(
@@ -60,7 +62,7 @@ fun ToDoContent(
         Spacer(modifier = Modifier.height(8.dp))
         Button(
             onClick = {
-                todoViewModel.addTask(taskText)
+                todoViewModel.addTask(Task().apply { title = taskText })
                 taskText = ""
             },
             modifier = Modifier.fillMaxWidth()
@@ -70,7 +72,7 @@ fun ToDoContent(
         Spacer(modifier = Modifier.height(16.dp))
 
         LazyColumn {
-            items(todoViewModel.todoList) { task ->
+            items(tasks) { task ->
                 TaskItem(task, todoViewModel::removeTask)
             }
         }
@@ -78,15 +80,15 @@ fun ToDoContent(
 }
 
 @Composable
-fun TaskItem(task: String, onDelete: (String) -> Unit) {
+fun TaskItem(task: Task, onDelete: (String) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(task, style = Typography.bodyLarge)
-        IconButton(onClick = { onDelete(task) }) {
+        Text(task.title, style = Typography.bodyLarge)
+        IconButton(onClick = { onDelete(task.id) }) {
             Icon(Icons.Default.Delete, contentDescription = "Delete Task")
         }
     }
