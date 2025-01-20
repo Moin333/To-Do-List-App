@@ -1,4 +1,4 @@
-package com.example.to_dolistapp
+package com.example.to_dolistapp.presentation.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

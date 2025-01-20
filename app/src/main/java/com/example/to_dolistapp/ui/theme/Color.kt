@@ -9,3 +9,5 @@ val TertiaryDark = Color(0xFF20C8CB)
 val PrimaryLight = Color(0xFFED730F)
 val SecondaryLight = Color(0xFF545A66)
 val TertiaryLight = Color(0xFF1C969E)
+
+val OnPrimaryContainer = Color(0x24F68B19)
