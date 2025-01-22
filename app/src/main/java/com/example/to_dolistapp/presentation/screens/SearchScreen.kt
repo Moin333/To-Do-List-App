@@ -1,12 +1,12 @@
-package com.example.to_dolistapp.presentation.screen
+package com.example.to_dolistapp.presentation.screens
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 
 @Composable
-fun UpcomingScreen(
+fun SearchScreen(
     navController: NavController,
 ) {
-    // Upcoming screen content
+    // Search screen content
 
 }

@@ -1,4 +1,4 @@
-package com.example.to_dolistapp.presentation.screen
+package com.example.to_dolistapp.presentation.screens
 
 import android.content.Intent
 import androidx.compose.foundation.Image
