@@ -1,80 +1,39 @@
 package com.example.to_dolistapp.presentation.screens
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.to_dolistapp.ui.theme.Typography
-import com.example.to_dolistapp.viewmodel.AuthViewModel
 import com.example.to_dolistapp.viewmodel.ToDoViewModel
 import com.example.to_dolistapp.model.entities.Task
 
 @Composable
 fun ToDoScreen(
     navController: NavController,
-    authViewModel: AuthViewModel = hiltViewModel(),
     todoViewModel: ToDoViewModel = hiltViewModel()
 ) {
-    ToDoContent(todoViewModel, authViewModel, navController)
+    ToDoContent(todoViewModel, navController)
 }
 
 @Composable
 fun ToDoContent(
     todoViewModel: ToDoViewModel,
-    authViewModel: AuthViewModel,
     navController: NavController
 ) {
-    var taskText by rememberSaveable { mutableStateOf("") }
     val tasks by todoViewModel.todoList.collectAsState(initial = emptyList())
 
-    Column(modifier = Modifier.padding(16.dp)) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(text = "Your Tasks", style = Typography.headlineMedium)
-            Button(onClick = {
-                authViewModel.logout()
-                navController.navigate("auth") {
-                    popUpTo("todo") { inclusive = true }
-                }
-            }) {
-                Text("Logout")
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        TextField(
-            value = taskText,
-            onValueChange = { taskText = it },
-            label = { Text(text = "Enter Task", style = Typography.bodyMedium) },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Button(
-            onClick = {
-                todoViewModel.addTask(Task().apply { title = taskText })
-                taskText = ""
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(text = "Add Task", style = Typography.bodyLarge)
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-
-        LazyColumn {
-            items(tasks) { task ->
-                TaskItem(task, todoViewModel::removeTask)
-            }
+    LazyColumn {
+        items(tasks) { task ->
+            TaskItem(task, todoViewModel::removeTask)
         }
     }
 }
@@ -84,12 +43,40 @@ fun TaskItem(task: Task, onDelete: (String) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
+            .padding(bottom = 8.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(task.title, style = Typography.bodyLarge)
-        IconButton(onClick = { onDelete(task.id) }) {
-            Icon(Icons.Default.Delete, contentDescription = "Delete Task")
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(
+                text = task.title,
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            if (!task.description.isNullOrEmpty()) {
+                Text(
+                    text = task.description ?: "",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+        IconButton(
+            onClick = { onDelete(task.id) },
+            modifier = Modifier.size(40.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = "Delete Task",
+                tint = MaterialTheme.colorScheme.error
+            )
         }
     }
+    HorizontalDivider(
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+        thickness = 1.dp
+    )
 }

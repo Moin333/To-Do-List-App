@@ -6,39 +6,26 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.to_dolistapp.presentation.screens.AddTaskScreen
 import com.example.to_dolistapp.presentation.screens.AuthScreen
 import com.example.to_dolistapp.presentation.screens.BrowseScreen
 import com.example.to_dolistapp.presentation.screens.LoginScreen
@@ -56,7 +43,6 @@ import com.facebook.FacebookException
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 
 
 @Suppress("DEPRECATION")
@@ -217,67 +203,3 @@ fun AppNavigation(
     }
 }
 
-@Composable
-fun AddTaskScreen(navController: NavHostController) {
-    val scope = rememberCoroutineScope()
-
-    Surface(modifier = Modifier.fillMaxSize()) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            TextField(
-                value = "",
-                onValueChange = {},
-                label = { Text("Task Title") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            TextField(
-                value = "",
-                onValueChange = {},
-                label = { Text("Task Description") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                item {
-                    OutlinedButton(onClick = { /* Date Picker logic */ }) {
-                        Text("Date")
-                    }
-                }
-                item {
-                    OutlinedButton(onClick = { /* Priority Picker logic */ }) {
-                        Text("Priority")
-                    }
-                }
-                item {
-                    OutlinedButton(onClick = { /* Reminder Picker logic */ }) {
-                        Text("Reminders")
-                    }
-                }
-                item {
-                    OutlinedButton(onClick = { /* Dropdown Menu logic */ }) {
-                        Text("More Options")
-                    }
-                }
-            }
-
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Button(
-                onClick = {
-                    scope.launch {
-                        // Handle task addition logic
-                        navController.popBackStack()
-                    }
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Add Task")
-            }
-        }
-    }
-}
