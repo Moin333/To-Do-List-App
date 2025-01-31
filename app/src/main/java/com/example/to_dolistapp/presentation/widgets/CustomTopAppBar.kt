@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.AutoAwesomeMotion
 import androidx.compose.material.icons.outlined.History
@@ -34,7 +35,7 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CustomTopAppBar(currentRoute: String, onMenuClick: (String) -> Unit) {
+fun CustomTopAppBar(currentRoute: String, onMenuClick: (String) -> Unit, onBackPress: (() -> Unit)? = null) {
     var showMenu by remember { mutableStateOf(false) }
 
     TopAppBar(
@@ -45,9 +46,17 @@ fun CustomTopAppBar(currentRoute: String, onMenuClick: (String) -> Unit) {
                     "upcoming" -> "Upcoming"
                     "search" -> "Search"
                     "browse" -> "xyz"
+                    "settings" -> "Settings"
                     else -> ""
                 }
             )
+        },
+        navigationIcon = {
+            if (currentRoute == "settings" && onBackPress != null) {
+                IconButton(onClick = onBackPress) {
+                    Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = "Back")
+                }
+            }
         },
         actions = {
             when (currentRoute) {

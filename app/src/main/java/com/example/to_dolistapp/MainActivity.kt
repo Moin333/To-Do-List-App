@@ -30,6 +30,7 @@ import com.example.to_dolistapp.presentation.screens.AuthScreen
 import com.example.to_dolistapp.presentation.screens.BrowseScreen
 import com.example.to_dolistapp.presentation.screens.LoginScreen
 import com.example.to_dolistapp.presentation.screens.SearchScreen
+import com.example.to_dolistapp.presentation.screens.SettingsScreen
 import com.example.to_dolistapp.presentation.screens.SignupScreen
 import com.example.to_dolistapp.presentation.screens.ToDoScreen
 import com.example.to_dolistapp.presentation.screens.UpcomingScreen
@@ -72,10 +73,17 @@ class MainActivity : ComponentActivity() {
                 Scaffold(
                     topBar = {
                         val currentRoute = navController.currentBackStackEntryFlow.collectAsState(initial = null).value?.destination?.route
-                        if (currentRoute in listOf("todo", "upcoming", "search", "browse")) {
-                            CustomTopAppBar(currentRoute = currentRoute ?: "") { action ->
-                                // Handle menu clicks here if needed
-                            }
+                        if (currentRoute in listOf("todo", "upcoming", "search", "browse", "settings")) {
+                            CustomTopAppBar(
+                                currentRoute = currentRoute ?: "",
+                                onMenuClick = { action ->
+                                    when (action) {
+                                        "settings" -> navController.navigate("settings")
+                                        "back" -> navController.popBackStack()
+                                    }
+                                },
+                                onBackPress = { navController.popBackStack() }
+                            )
                         }
                     },
                     floatingActionButton = {
@@ -199,6 +207,9 @@ fun AppNavigation(
         }
         composable("add_task") {
             AddTaskScreen(navController = navController)
+        }
+        composable("settings") {
+            SettingsScreen(navController = navController, authViewModel = authViewModel)
         }
     }
 }
