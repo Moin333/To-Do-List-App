@@ -6,6 +6,7 @@ import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
 import java.util.UUID
+import java.time.LocalDate
 
 class Task : RealmObject {
     @PrimaryKey
@@ -20,4 +21,8 @@ class Task : RealmObject {
     var deadline: RealmInstant? = null
     var location: String? = null
     var subTasks: RealmList<SubTask> = realmListOf()
+}
+
+fun RealmInstant.toLocalDate(): LocalDate {
+    return LocalDate.ofEpochDay(this.epochSeconds / (24 * 60 * 60))
 }
