@@ -33,15 +33,10 @@ fun BottomNavigationBar(navController: NavController) {
     val currentDestination by navController.currentBackStackEntryAsState()
 
     Column {
-        // Add the top border
-        HorizontalDivider(
-            color = Color.DarkGray,
-            thickness = 0.5.dp,
-            modifier = Modifier.fillMaxWidth()
-        )
-
         NavigationBar(
-            containerColor = MaterialTheme.colorScheme.background
+            containerColor = MaterialTheme.colorScheme.surfaceTint,
+            tonalElevation = 3.dp,
+            modifier = Modifier.fillMaxWidth()
         ) {
             val items = listOf(
                 BottomNavItem("todo", Icons.Filled.Home, Icons.Outlined.Home, "To-Do"),
@@ -75,18 +70,16 @@ fun BottomNavigationBar(navController: NavController) {
                     },
                     colors = NavigationBarItemDefaults.colors(
                         selectedIconColor = MaterialTheme.colorScheme.primary,
-                        unselectedIconColor = MaterialTheme.colorScheme.onBackground,
+                        unselectedIconColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
                         selectedTextColor = MaterialTheme.colorScheme.primary,
-                        unselectedTextColor = MaterialTheme.colorScheme.onBackground,
-                        indicatorColor = MaterialTheme.colorScheme.onPrimaryContainer
+                        unselectedTextColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+                        indicatorColor = MaterialTheme.colorScheme.surfaceVariant
                     )
                 )
             }
         }
     }
 }
-
-
 
 data class BottomNavItem(
     val route: String,

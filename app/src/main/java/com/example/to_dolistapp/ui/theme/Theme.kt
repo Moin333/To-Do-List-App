@@ -22,13 +22,16 @@ private val DarkColorScheme = darkColorScheme(
     secondary = SecondaryDark,
     tertiary = TertiaryDark,
     onPrimaryContainer = OnPrimaryContainer,
-    background = Color.Black,
-    surface = Color.DarkGray,
+    background = Color(0xFF1F1F1F),     // Lighter dark background
+    surface = Color(0xFF242424),        // Slightly lighter surface
+    surfaceVariant = Color(0xFF2D2D2D), // For cards and elevated surfaces
     onPrimary = Color.White,
     onSecondary = Color.White,
     onTertiary = Color.White,
     onBackground = Color.White,
-    onSurface = Color.White
+    onSurface = Color.White,
+    surfaceTint = Color(0xFF262626),    // Darker shade for bottom navigation
+    outlineVariant = Color(0xFF3D3D3D)  // For dividers and borders
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -36,13 +39,16 @@ private val LightColorScheme = lightColorScheme(
     secondary = SecondaryLight,
     tertiary = TertiaryLight,
     onPrimaryContainer = OnPrimaryContainer,
-    background = Color.White,
+    background = Color(0xFFFFFFFF),
     surface = Color.White,
+    surfaceVariant = Color(0xFFF3F3F3),
     onPrimary = Color.Black,
     onSecondary = Color.Black,
     onTertiary = Color.Black,
     onBackground = Color.Black,
-    onSurface = Color.Black
+    onSurface = Color.Black,
+    surfaceTint = Color(0xFFFCFCF7),
+    outlineVariant = Color(0xFFE0E0E0)
 )
 
 @Composable
@@ -74,7 +80,7 @@ fun ToDoListAppTheme(
 
             // Set the status and navigation bar background colors
             window.statusBarColor = colorScheme.background.toArgb()
-            window.navigationBarColor = colorScheme.background.toArgb()
+            window.navigationBarColor = colorScheme.surfaceTint.toArgb()
         }
     }
 

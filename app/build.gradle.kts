@@ -57,7 +57,7 @@ android {
 dependencies {
 
     //Firebase authentication
-    implementation("com.google.firebase:firebase-auth:23.1.0")
+    implementation("com.google.firebase:firebase-auth:23.2.0")
     implementation("com.google.android.gms:play-services-auth:21.3.0")
     implementation("com.facebook.android:facebook-login:17.0.1")
     implementation("com.facebook.android:facebook-android-sdk:15.0.1")
@@ -81,8 +81,10 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-extended")
+    implementation("androidx.compose.material3:material3-window-size-class:1.3.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
