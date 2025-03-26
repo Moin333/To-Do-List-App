@@ -7,9 +7,16 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.to_dolistapp.presentation.screens.ActivityLogScreen
+import com.example.to_dolistapp.presentation.screens.AddProjects
 import com.example.to_dolistapp.presentation.screens.AuthScreen
 import com.example.to_dolistapp.presentation.screens.BrowseScreen
+import com.example.to_dolistapp.presentation.screens.BrowseTemplatesScreen
+import com.example.to_dolistapp.presentation.screens.CompletedScreen
+import com.example.to_dolistapp.presentation.screens.FiltersAndLabelsScreen
+import com.example.to_dolistapp.presentation.screens.InboxScreen
 import com.example.to_dolistapp.presentation.screens.LoginScreen
+import com.example.to_dolistapp.presentation.screens.ManageProjectsScreen
 import com.example.to_dolistapp.presentation.screens.SearchScreen
 import com.example.to_dolistapp.presentation.screens.SettingsScreen
 import com.example.to_dolistapp.presentation.screens.SignupScreen
@@ -56,6 +63,27 @@ fun AppNavigation(
         }
         composable("settings") {
             SettingsScreen(navController = navController, authViewModel = authViewModel)
+        }
+        composable("inbox") {
+            InboxScreen(navController = navController)
+        }
+        composable("filters_labels") {
+            FiltersAndLabelsScreen(navController = navController)
+        }
+        composable("completed") {
+            CompletedScreen(navController = navController)
+        }
+        composable("add_projects") {
+            AddProjects(navController = navController)
+        }
+        composable("manage_projects") {
+            ManageProjectsScreen(navController = navController)
+        }
+        composable("browse_templates") {
+            BrowseTemplatesScreen(navController = navController)
+        }
+        composable("activity_log") {
+            ActivityLogScreen(navController = navController)
         }
     }
 }

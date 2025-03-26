@@ -5,8 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.to_dolistapp.model.entities.Task
 import com.example.to_dolistapp.model.repository.ToDoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,22 +17,28 @@ class ToDoViewModel @Inject constructor(
     private val repository: ToDoRepository
 ) : ViewModel() {
 
-    // StateFlow to hold the list of tasks
-    private val _todoList = MutableStateFlow<List<Task>>(emptyList())
-    val todoList: StateFlow<List<Task>> get() = _todoList
+    // Use the raw flow of all tasks from the repository.
+    private val _allTasks = repository.getAllTasks()
 
-    init {
-        // Collect tasks from the repository and update the StateFlow
-        viewModelScope.launch {
-            repository.getAllTasks().collect { tasks ->
-                _todoList.value = tasks
-            }
-        }
-    }
+    // Expose active tasks (not completed)
+    val activeTasks: StateFlow<List<Task>> = _allTasks
+        .map { tasks -> tasks.filter { !it.isCompleted } }
+        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+    // Expose completed tasks (if needed in ActivityLogScreen, etc.)
+    val completedTasks: StateFlow<List<Task>> = _allTasks
+        .map { tasks -> tasks.filter { it.isCompleted } }
+        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
     fun addTask(task: Task) {
         viewModelScope.launch {
             repository.addTask(task)
+        }
+    }
+
+    fun completeTask(taskId: String) {
+        viewModelScope.launch {
+            repository.markTaskComplete(taskId)
         }
     }
 
@@ -42,5 +50,11 @@ class ToDoViewModel @Inject constructor(
 
     fun getTaskById(taskId: String): Task? {
         return repository.getTaskById(taskId)
+    }
+
+    fun updateTaskFields(taskId: String, newTitle: String, newDescription: String) {
+        viewModelScope.launch {
+            repository.updateTaskFields(taskId, newTitle, newDescription)
+        }
     }
 }

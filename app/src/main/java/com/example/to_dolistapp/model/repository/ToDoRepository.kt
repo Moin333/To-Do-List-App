@@ -22,7 +22,26 @@ class ToDoRepository @Inject constructor(private val databaseManager: DatabaseMa
         return databaseManager.getTaskById(taskId)
     }
 
+    fun searchTasks(query: String): Flow<List<Task>> {
+        // Return all tasks if the query is blank
+        if (query.isBlank()) {
+            return getAllTasks()
+        }
+
+        // Otherwise, search by title or description
+        return databaseManager.searchTasks(query)
+    }
+
+    suspend fun markTaskComplete(taskId: String) {
+        databaseManager.markTaskComplete(taskId)
+    }
+
     suspend fun deleteTask(taskId: String) {
         databaseManager.deleteTask(taskId)
     }
+
+    suspend fun updateTaskFields(taskId: String, newTitle: String, newDescription: String) {
+        databaseManager.updateTaskFields(taskId, newTitle, newDescription)
+    }
+
 }

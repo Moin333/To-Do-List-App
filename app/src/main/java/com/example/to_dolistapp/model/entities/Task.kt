@@ -21,6 +21,7 @@ class Task : RealmObject {
     var deadline: RealmInstant? = null
     var location: String? = null
     var subTasks: RealmList<SubTask> = realmListOf()
+    var isCompleted: Boolean = false
 }
 
 fun RealmInstant.toLocalDate(): LocalDate {

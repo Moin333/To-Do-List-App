@@ -1,6 +1,7 @@
 package com.example.to_dolistapp.presentation.screens
 
 import android.content.Intent
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -12,7 +13,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -61,7 +61,7 @@ fun AuthScreen(
         }
     }
 
-    val context = LocalContext.current as MainActivity
+    val context = LocalActivity.current as MainActivity
 
     Column(
         modifier = Modifier

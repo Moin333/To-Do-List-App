@@ -25,11 +25,43 @@ class DatabaseManager @Inject constructor(private val realm: Realm) {
         return realm.query(Task::class, "id == $0", taskId).first().find()
     }
 
+    fun searchTasks(query: String): Flow<List<Task>> {
+        return realm.query(
+            Task::class,
+            // CONTAINS[c] means case-insensitive substring match
+            "title CONTAINS[c] $0 OR description CONTAINS[c] $0",
+            query
+        )
+            .asFlow()
+            .map { result -> result.list }
+    }
+
+
     suspend fun deleteTask(taskId: String) {
         realm.write {
             val task = query(Task::class, "id == $0", taskId).first().find()
             task?.let { delete(it) }
         }
     }
+
+    suspend fun markTaskComplete(taskId: String) {
+        realm.write {
+            val task = query(Task::class, "id == $0", taskId).first().find()
+            task?.let {
+                it.isCompleted = true
+            }
+        }
+    }
+
+    suspend fun updateTaskFields(taskId: String, newTitle: String, newDescription: String) {
+        realm.write {
+            val task = query(Task::class, "id == $0", taskId).first().find()
+            task?.apply {
+                title = newTitle
+                description = newDescription
+            }
+        }
+    }
+
 }
 

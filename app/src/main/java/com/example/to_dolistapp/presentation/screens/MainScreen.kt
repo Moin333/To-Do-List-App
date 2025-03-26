@@ -42,6 +42,7 @@ fun MainScreen(
                     onMenuClick = { action ->
                         when (action) {
                             "settings" -> navController.navigate("settings")
+                            "activity_log" -> navController.navigate("activity_log")
                             "back" -> navController.popBackStack()
                         }
                     },
