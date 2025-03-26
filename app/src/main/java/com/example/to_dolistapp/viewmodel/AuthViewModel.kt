@@ -140,4 +140,9 @@ class AuthViewModel @Inject constructor(
             }
     }
 
+    fun getCurrentUserEmail(): String? {
+        return firebaseAuth.currentUser?.email
+    }
+
+
 }
