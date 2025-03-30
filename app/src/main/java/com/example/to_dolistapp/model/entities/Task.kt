@@ -13,6 +13,7 @@ class Task : RealmObject {
     var id: String = UUID.randomUUID().toString()
     var title: String = ""
     var description: String? = null
+    var projectName: String? = null
     var labels: RealmList<String> = realmListOf()
     var priority: Int = 0 // 1: P1, 2: P2, 3: P3, 4: P4
     var date: RealmInstant? = null

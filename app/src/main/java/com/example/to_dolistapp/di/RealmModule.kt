@@ -35,7 +35,7 @@ object RealmModule {
             Inbox::class,
             Root::class
         ))
-            .schemaVersion(2)
+            .schemaVersion(3)
             .build()
     }
 
